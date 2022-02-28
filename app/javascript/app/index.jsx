@@ -2,7 +2,7 @@ import * as React from 'react'
 import * as ReactDOM from 'react-dom'
 import { ThemeProvider } from 'styled-components'
 
-import App from '../containers'
+import App from '../containers/app'
 import theme from './theme'
 
 document.addEventListener('DOMContentLoaded', () => {

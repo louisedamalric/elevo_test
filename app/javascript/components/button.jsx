@@ -2,7 +2,7 @@ import React from 'react'
 import styled from 'styled-components'
 import PropTypes from 'prop-types';
 
-export default Button = ({ text, handleClick }) => {
+const Button = ({ text, handleClick }) => {
   return (
     <StyledButton onClick={handleClick}>
       {text}
@@ -13,7 +13,7 @@ export default Button = ({ text, handleClick }) => {
 Button.propTypes = {
   color: PropTypes.string,
   handleClick: PropTypes.func,
-  children: PropTypes.string,
+  text: PropTypes.string,
 };
 
 const StyledButton = styled.a`
@@ -23,3 +23,5 @@ const StyledButton = styled.a`
   font-weight: 700;
   cursor: pointer;
 `
+
+export default Button

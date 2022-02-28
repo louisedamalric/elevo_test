@@ -1,11 +1,14 @@
 import * as React from 'react'
 import * as ReactDOM from 'react-dom'
+import { ThemeProvider } from 'styled-components'
 
-const App = () => {
-  return (<div>Elevo</div>)
-}
+import App from '../containers'
+import theme from './theme'
 
 document.addEventListener('DOMContentLoaded', () => {
-  const rootEl = document.getElementById('app')
-  ReactDOM.render(<App />, rootEl)
+  ReactDOM.render(
+    (<ThemeProvider theme={theme}>
+      <App />
+    </ThemeProvider>), document.getElementById('app')
+  )
 })

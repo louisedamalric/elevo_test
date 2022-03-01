@@ -6,6 +6,7 @@
     "@babel/preset-react": "^7.16.7",
     "@hotwired/stimulus": "^3.0.1",
     "@hotwired/turbo-rails": "^7.1.1",
+    "axios": "^0.26.0",
     "babel-jest": "^27.5.1",
     "esbuild": "^0.14.23",
     "jest": "^27.5.1",

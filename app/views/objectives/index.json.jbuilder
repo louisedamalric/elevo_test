@@ -1,3 +1,3 @@
 json.array! @objectives do |objective|
-  json.(objective, :id, :title, :weights)
+  json.partial! 'show', objective: objective
 end

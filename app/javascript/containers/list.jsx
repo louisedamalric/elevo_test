@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { memo } from 'react'
 import styled from 'styled-components'
 import PropTypes from 'prop-types';
 
@@ -23,12 +23,12 @@ const List = ({ items }) => {
 }
 
 List.propTypes = {
-  items: PropTypes.array.isRequired
+  items: PropTypes.array
 };
 
 const Container = styled.div`
-  margin: 10rem auto;
+  margin: 3rem auto;
   max-width: 800px;
 `
 
-export default List
+export default memo(List)

@@ -1,12 +1,14 @@
-import React from 'react'
+import React, { memo } from 'react'
 import styled from 'styled-components'
 import PropTypes from 'prop-types';
 
 const Button = ({ text, handleClick }) => {
   return (
-    <StyledButton onClick={handleClick}>
-      {text}
-    </StyledButton>
+    <div>
+      <StyledButton onClick={handleClick}>
+        {text}
+      </StyledButton>
+    </div>
   )
 }
 
@@ -24,4 +26,4 @@ const StyledButton = styled.a`
   cursor: pointer;
 `
 
-export default Button
+export default memo(Button)

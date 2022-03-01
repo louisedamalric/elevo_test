@@ -5,7 +5,8 @@ module.exports = {
     titleColor: '#081A3F',
     white: '#FFFFFF',
     bgLightPink: '#FFF8F6',
-    bgLightBlue: '#F6F8FF'
+    bgLightBlue: '#F6F8FF',
+    lightGrey: '#dbdbdb',
   },
   screenSizes: {
     phone: '440px',

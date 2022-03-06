@@ -1,56 +1,128 @@
-import React, { memo } from 'react'
+import React, { memo, useContext, useEffect, useState } from 'react'
 import styled from 'styled-components'
-import PropTypes from 'prop-types';
+import PropTypes from 'prop-types'
+import { isEmpty } from 'lodash'
 
-import { useInput } from '../hooks/use_input';
+import { StateContext } from "../contexts/state"
+import { request } from '../api/requester'
 
-const Form = ({ handleSubmit, errors, handleCancel }) => {
-  const { value:title, bind:bindTitle, reset:resetTitle } = useInput('');
-  const { value:weight, bind:bindWeight, reset:resetWeight } = useInput('');
+const Form = ({ itemId }) => {
+  const { state, setState } = useContext(StateContext)
+  const { objectives, error } = state
+  const [show, setShow] = useState(true)
+  const [objectiveErrors, setObjectiveErrors] = useState([])
+  const [value, setValue] = useState({
+    weight: '',
+    title: ''
+  })
 
-  const handleOnSubmit = (e) => {
+  useEffect(() => {
+    const selectedItem = objectives.find(item => item.id == itemId)
+    if (selectedItem) {
+      setValue({ weight: selectedItem.weight, title: selectedItem.title })
+    }
+  }, [itemId])
+
+  const handleChange = (newValue, valueType) => {
+    setValue({ ...value, [valueType]: newValue })
+  }
+
+  const handleDataReceived = (data, reducer) => {
+    if (isEmpty(data.errors)) {
+      setState({
+        ...state,
+        objectives: reducer(data),
+        showButton: true
+      })
+      setObjectiveErrors([])
+      setShow(false)
+    } else {
+      setObjectiveErrors(data.errors)
+    }
+  }
+
+  const updateObjective = (data) => (
+    (prev) => prev.objectives.map((objective) => (
+      objective.id === data.id ? data : objective
+    )
+  ))
+
+  const createObjective = (data) => (
+    (prev) => [...prev, data]
+  )
+
+  const handleSubmit = async (e) => {
     e.preventDefault()
-    handleSubmit({ title, weight })
-    resetTitle();
-    resetWeight();
+    try {
+      if (itemId) {
+        const response = await request(`/objectives/${itemId}`, value, 'PUT')
+        handleDataReceived(response, updateObjective)
+      } else {
+        const response = await request('/objectives', value, 'POST')
+        handleDataReceived(response, createObjective)
+      }
+      setValue({ weight: '', title: ''})
+    } catch(error) {
+      setState({...state, error })
+    }
+  }
+
+  if (error) {
+    return <div>{error}</div>
   }
 
   return (
-    <form onSubmit={handleOnSubmit}>
+    show &&
+    <StyledForm onSubmit={handleSubmit}>
       <Container>
         <Label>
           Title
-          <Input type="text" {...bindTitle} />
+          <Input
+            type="text"
+            onChange={(e) => handleChange(e.target.value, 'title')}
+            value={value.title}
+          />
         </Label>
         <Label>
           Weight
-          <Input type="number" {...bindWeight} />
+          <Input
+            type="number"
+            onChange={(e) => handleChange(e.target.value, 'weight')}
+            value={value.weight}
+          />
         </Label>
       </Container>
-      <Span onClick={handleCancel}>Cancel</Span>
-      <Submit type="submit" value="Add" />
+      <Span onClick={() => setShow(false)}>
+        Cancel
+      </Span>
+      <Submit type="submit" value={itemId ? "Update" : "Add"} />
       <Errors>
-        {errors.map((error) => (
+        {objectiveErrors.map((error) => (
           <span key={error}>{error}</span>
         ))}
       </Errors>
-    </form>
+    </StyledForm>
   )
 }
 
 Form.propTypes = {
-  handleSubmit: PropTypes.func.isRequired,
-  handleCancel: PropTypes.func.isRequired,
-  errors: PropTypes.array
+  handleSubmit: PropTypes.func,
+  errors: PropTypes.array,
+  itemId: PropTypes.number
 };
 
+const StyledForm = styled.form`
+  margin: auto;
+  max-width: 800px;
+`
+
 const Container = styled.div`
-  margin: 4rem 0 2rem;
   display: flex;
   justify-content: space-around;
-  align-items: flex-end;
+  margin-bottom: 2rem;
+  align-items: center;
   padding: 2rem;
-  background-color: ${({ theme }) => theme.colors.bgLightBlue};
+  background-color: ${({ theme }) => theme.colors.bgLightPink};
 
   >label:first-child {
     flex: 1;

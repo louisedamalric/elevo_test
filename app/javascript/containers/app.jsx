@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react'
+import React, { useEffect, useCallback, useContext } from 'react'
 import { isEmpty } from 'lodash'
 import styled from 'styled-components'
 
@@ -6,71 +6,54 @@ import Button from '../components/button'
 import List from './list'
 import Form from './form'
 import Navbar from '../components/navbar'
+import { StateContext } from "../contexts/state"
+import { getRequest } from '../api/requester'
 
 const App = () => {
-  const [isError, setIsError] = useState(null)
-  const [objectives, setObjectives] = useState([])
-  const [objectiveErrors, setObjectiveErrors] = useState([])
-  const [displayForm, setDisplayForm] = useState(false)
+  const { setState, state } = useContext(StateContext)
+  const { objectives, error, showButton, weightConsistencyError } = state
 
   useEffect(() => {
-    fetch('/objectives')
-      .then(response => response.json())
-      .then((data) => setObjectives(data))
-      .catch(error => {
-        setIsError(error)
-      })
+    const fetchObjectives = async () => {
+      try {
+        const response = await getRequest('/objectives')
+        console.log(response)
+        setState({ 
+          ...state,
+          objectives: response.data,
+          weightConsistencyError: response.weight_consistency_error
+        })
+      } catch(error) {
+        setState({ ...state, error })
+      }
+    }
+
+    fetchObjectives()
   }, [])
 
   const handleClick = useCallback(() => {
-    setDisplayForm(true)
+    setState({ ...state, showButton: false })
   })
 
-  const handleSubmit = useCallback((values) => {
-    fetch('/objectives', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(values)
-    })
-      .then(response => response.json())
-      .then((data) => {
-        if (isEmpty(data.errors)) {
-          setObjectives([...objectives, data ])
-          setObjectiveErrors([])
-          setDisplayForm(false)
-        } else {
-          setObjectiveErrors(data.errors)
-        }
-      })
-      .catch(error => {
-        setIsError(error)
-      })
-  })
-
-  const handleCancel = useCallback(() => {
-    setDisplayForm(false)
-  })
+  if (error) {
+    return <div>{error}</div>
+  }
 
   return (
-    !isError &&
+    !error &&
     <Container>
       <Navbar />
-      {!displayForm &&
+      {showButton &&
         <Button
           text='Add new objective +'
           handleClick={handleClick}
-        />
-      }
-      {!!displayForm &&
-        <Form
-          handleSubmit={handleSubmit}
-          errors={objectiveErrors}
-          handleCancel={handleCancel}
-        />
-      }
+        />}
+      {!!weightConsistencyError &&
+        <WeightError>{weightConsistencyError}</WeightError>}
+      {!showButton &&
+        <Form />}
       {!isEmpty(objectives) &&
-        <List items={objectives} />
-      }
+        <List />}
     </Container>
   )
 }
@@ -78,6 +61,10 @@ const App = () => {
 const Container = styled.div`
   max-width: 1030px;
   margin: auto;
+`
+
+const WeightError = styled.div`
+  margin: 3rem auto;
 `
 
 export default App

@@ -1,4 +1,4 @@
 Rails.application.routes.draw do
   root 'pages#home'
-  resources :objectives, only: [:index, :create]
+  resources :objectives, only: [:index, :create, :update]
 end

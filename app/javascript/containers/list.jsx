@@ -1,30 +1,23 @@
-import React, { memo } from 'react'
+import React, { memo, useContext } from 'react'
 import styled from 'styled-components'
-import PropTypes from 'prop-types';
 
 import ListItem from '../components/list_item'
+import { StateContext } from "../contexts/state"
 
-const List = ({ items }) => {
-  const handleItemClick = () => {
-    console.log('creating')
-  }
+const List = () => {
+  const { state: { objectives } } = useContext(StateContext)
 
   return (
     <Container>
-      {items.map((e) =>
+      {objectives.map((e) =>
         <ListItem
           key={e.id}
           item={e}
-          handleItemClick={handleItemClick}
         />
       )}
     </Container>
   )
 }
-
-List.propTypes = {
-  items: PropTypes.array
-};
 
 const Container = styled.div`
   margin: 3rem auto;

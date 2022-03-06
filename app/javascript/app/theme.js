@@ -8,13 +8,4 @@ module.exports = {
     bgLightBlue: '#F6F8FF',
     lightGrey: '#dbdbdb',
   },
-  screenSizes: {
-    phone: '440px',
-    tablet: '768px',
-    desktop: '1200px'
-  },
-  borders: {
-    boxShadow: '0 0 6px rgba(176, 176, 176, 0.5)',
-    borderRadius: '0.4rem'
-  }
 }

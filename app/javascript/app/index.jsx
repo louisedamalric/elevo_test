@@ -4,11 +4,16 @@ import { ThemeProvider } from 'styled-components'
 
 import App from '../containers/app'
 import theme from './theme'
+import { StateProvider } from "../contexts/state"
 
 document.addEventListener('DOMContentLoaded', () => {
   ReactDOM.render(
-    (<ThemeProvider theme={theme}>
-      <App />
-    </ThemeProvider>), document.getElementById('app')
+    (
+    <StateProvider>
+      <ThemeProvider theme={theme}>
+        <App />
+      </ThemeProvider>
+    </StateProvider>
+    ), document.getElementById('app')
   )
 })

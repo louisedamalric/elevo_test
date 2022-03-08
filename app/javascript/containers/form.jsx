@@ -36,7 +36,7 @@ const Form = ({ itemId, hideForm }) => {
         displayItemForm: false
       }))
       setObjectiveErrors([])
-      hideForm
+      hideForm()
     } else {
       setObjectiveErrors(data.errors)
     }

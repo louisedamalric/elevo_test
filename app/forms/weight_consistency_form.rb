@@ -17,10 +17,10 @@ class WeightConsistencyForm
 
     if @weights.sum != VALID_TOTAL_WEIGHT
       errors.add(
-        :weight,
-        "Heads up! Your objective weights are invalid.
-        They should all be defined and the sum should be 100%.
-        Actual sum: #{@weights.sum}%"
+        :base,
+        "Heads up! Your objective weights are invalid. " \
+        "They should all be defined and the sum should be 100%. " \
+        "Actual sum: #{@weights.sum}%"
       )
     end
   end

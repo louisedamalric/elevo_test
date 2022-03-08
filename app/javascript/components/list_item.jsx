@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react'
+import React, { useState, useContext, useCallback } from 'react'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 
@@ -14,9 +14,9 @@ const ListItem = ({ item }) => {
     setDisplayItemForm((prev) => !prev)
   }
 
-  const handleCancel = () => {
+  const hideForm = useCallback(() => {
     setDisplayItemForm(false)
-  }
+  })
 
   const reduce = (response) => (
     (prev) => prev.objectives.filter((objective) => (
@@ -29,7 +29,8 @@ const ListItem = ({ item }) => {
       const response = await request(`/objectives/${item.id}`, {}, 'DELETE')
       setState((prev) => ({
         ...state,
-        objectives: reduce(response)(prev)
+        objectives: reduce(response)(prev),
+        weightConsistencyError: response.weight_consistency_error
       }))
     } catch(error) {
       setState({...state, error })
@@ -52,7 +53,7 @@ const ListItem = ({ item }) => {
       </Container>
       {displayItemForm &&
         <Form
-          handleCancel={handleCancel}
+          hideForm={hideForm}
           itemId={item.id}
         />}
     </>

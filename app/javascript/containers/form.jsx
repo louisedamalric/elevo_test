@@ -6,7 +6,7 @@ import { isEmpty } from 'lodash'
 import { StateContext } from "../contexts/state"
 import { request } from '../api/requester'
 
-const Form = ({ itemId, handleCancel }) => {
+const Form = ({ itemId, hideForm }) => {
   const { state, setState } = useContext(StateContext)
   const { objectives, error } = state
   const [objectiveErrors, setObjectiveErrors] = useState([])
@@ -30,10 +30,13 @@ const Form = ({ itemId, handleCancel }) => {
     if (isEmpty(data.errors)) {
       setState((prev) => ({
         ...state,
+        weightConsistencyError: data.weight_consistency_error,
         objectives: reducer(data)(prev.objectives),
-        showButton: true
+        showButton: true,
+        displayItemForm: false
       }))
       setObjectiveErrors([])
+      hideForm
     } else {
       setObjectiveErrors(data.errors)
     }
@@ -89,7 +92,7 @@ const Form = ({ itemId, handleCancel }) => {
           />
         </Label>
       </Container>
-      <Span onClick={handleCancel}>
+      <Span onClick={hideForm}>
         Cancel
       </Span>
       <Submit type="submit" value={itemId ? "Update" : "Add"} />
@@ -103,7 +106,7 @@ const Form = ({ itemId, handleCancel }) => {
 }
 
 Form.propTypes = {
-  handleCancel: PropTypes.func.isRequired,
+  hideForm: PropTypes.func,
   errors: PropTypes.array,
   itemId: PropTypes.number
 };

@@ -34,7 +34,7 @@ const App = () => {
     setState({ ...state, showButton: false })
   })
 
-  const handleCancel = useCallback(() => {
+  const hideForm = useCallback(() => {
     setState({ ...state, showButton: true })
   })
 
@@ -54,7 +54,7 @@ const App = () => {
       {!!weightConsistencyError &&
         <WeightError>{weightConsistencyError}</WeightError>}
       {!showButton &&
-        <Form handleCancel={handleCancel}/>}
+        <Form hideForm={hideForm}/>}
       {!isEmpty(objectives) &&
         <List />}
     </Container>

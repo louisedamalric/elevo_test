@@ -6,10 +6,9 @@ import { isEmpty } from 'lodash'
 import { StateContext } from "../contexts/state"
 import { request } from '../api/requester'
 
-const Form = ({ itemId }) => {
+const Form = ({ itemId, handleCancel }) => {
   const { state, setState } = useContext(StateContext)
   const { objectives, error } = state
-  const [show, setShow] = useState(true)
   const [objectiveErrors, setObjectiveErrors] = useState([])
   const [value, setValue] = useState({
     weight: '',
@@ -29,20 +28,19 @@ const Form = ({ itemId }) => {
 
   const handleDataReceived = (data, reducer) => {
     if (isEmpty(data.errors)) {
-      setState({
+      setState((prev) => ({
         ...state,
-        objectives: reducer(data),
+        objectives: reducer(data)(prev.objectives),
         showButton: true
-      })
+      }))
       setObjectiveErrors([])
-      setShow(false)
     } else {
       setObjectiveErrors(data.errors)
     }
   }
 
   const updateObjective = (data) => (
-    (prev) => prev.objectives.map((objective) => (
+    (prev) => prev.map((objective) => (
       objective.id === data.id ? data : objective
     )
   ))
@@ -72,7 +70,6 @@ const Form = ({ itemId }) => {
   }
 
   return (
-    show &&
     <StyledForm onSubmit={handleSubmit}>
       <Container>
         <Label>
@@ -92,7 +89,7 @@ const Form = ({ itemId }) => {
           />
         </Label>
       </Container>
-      <Span onClick={() => setShow(false)}>
+      <Span onClick={handleCancel}>
         Cancel
       </Span>
       <Submit type="submit" value={itemId ? "Update" : "Add"} />
@@ -106,7 +103,7 @@ const Form = ({ itemId }) => {
 }
 
 Form.propTypes = {
-  handleSubmit: PropTypes.func,
+  handleCancel: PropTypes.func.isRequired,
   errors: PropTypes.array,
   itemId: PropTypes.number
 };

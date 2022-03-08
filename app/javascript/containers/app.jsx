@@ -17,8 +17,7 @@ const App = () => {
     const fetchObjectives = async () => {
       try {
         const response = await getRequest('/objectives')
-        console.log(response)
-        setState({ 
+        setState({
           ...state,
           objectives: response.data,
           weightConsistencyError: response.weight_consistency_error
@@ -33,6 +32,10 @@ const App = () => {
 
   const handleClick = useCallback(() => {
     setState({ ...state, showButton: false })
+  })
+
+  const handleCancel = useCallback(() => {
+    setState({ ...state, showButton: true })
   })
 
   if (error) {
@@ -51,7 +54,7 @@ const App = () => {
       {!!weightConsistencyError &&
         <WeightError>{weightConsistencyError}</WeightError>}
       {!showButton &&
-        <Form />}
+        <Form handleCancel={handleCancel}/>}
       {!isEmpty(objectives) &&
         <List />}
     </Container>

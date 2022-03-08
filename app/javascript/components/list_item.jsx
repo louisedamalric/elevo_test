@@ -1,10 +1,13 @@
-import React, { useState } from 'react'
+import React, { useState, useContext } from 'react'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 
 import Form from '../containers/form'
+import { request } from '../api/requester'
+import { StateContext } from '../contexts/state'
 
 const ListItem = ({ item }) => {
+  const { state, setState } = useContext(StateContext)
   const [displayItemForm, setDisplayItemForm] = useState(false)
 
   const handleClick = () => {
@@ -15,15 +18,38 @@ const ListItem = ({ item }) => {
     setDisplayItemForm(false)
   }
 
+  const reduce = (response) => (
+    (prev) => prev.objectives.filter((objective) => (
+        objective.id != response.id
+    ))
+  )
+
+  const handleDelete = async () => {
+    try {
+      const response = await request(`/objectives/${item.id}`, {}, 'DELETE')
+      setState((prev) => ({
+        ...state,
+        objectives: reduce(response)(prev)
+      }))
+    } catch(error) {
+      setState({...state, error })
+    }
+  }
+
   return (
     <>
-      <Item onClick={handleClick}>
-        <Arrow>
-          {displayItemForm ? '⌵' : '>'}
-        </Arrow>
-        <Title>{item.title}</Title>
-        <div>{item.weight} %</div>
-      </Item>
+      <Container>
+        <Item onClick={handleClick}>
+          <Arrow>
+            {displayItemForm ? '⌵' : '>'}
+          </Arrow>
+          <Title>{item.title}</Title>
+          <div>{item.weight} %</div>
+        </Item>
+        <Button onClick={handleDelete}>
+          🗑
+        </Button>
+      </Container>
       {displayItemForm &&
         <Form
           handleCancel={handleCancel}
@@ -39,7 +65,13 @@ ListItem.propTypes = {
 
 export default ListItem
 
+const Container = styled.div`
+  display: flex;
+  align-items: center;
+`
+
 const Item = styled.div`
+  flex: 1;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -47,6 +79,14 @@ const Item = styled.div`
   margin: 1rem 0;
   background-color: ${props => props.theme.colors.bgLightPink};
   cursor: pointer;
+`
+
+const Button = styled.div`
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-size: 14px;
+  padding: 1rem;
 `
 
 const Arrow = styled.div`

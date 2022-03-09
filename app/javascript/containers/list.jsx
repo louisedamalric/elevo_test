@@ -1,7 +1,7 @@
 import React, { memo, useContext } from 'react'
 import styled from 'styled-components'
 
-import ListItem from '../components/list_item'
+import ListItem from './list_item'
 import { StateContext } from "../contexts/state"
 
 const List = () => {

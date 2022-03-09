@@ -36,7 +36,6 @@ const Form = ({ itemId, hideForm }) => {
         displayItemForm: false
       }))
       setObjectiveErrors([])
-      hideForm()
     } else {
       setObjectiveErrors(data.errors)
     }
@@ -58,6 +57,7 @@ const Form = ({ itemId, hideForm }) => {
       if (itemId) {
         const response = await request(`/objectives/${itemId}`, value, 'PUT')
         handleDataReceived(response, updateObjective)
+        hideForm()
       } else {
         const response = await request('/objectives', value, 'POST')
         handleDataReceived(response, createObjective)

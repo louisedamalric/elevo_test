@@ -45,6 +45,7 @@ const ListItem = ({ item }) => {
             {displayItemForm ? '⌵' : '>'}
           </Arrow>
           <Title>{item.title}</Title>
+          <div>{item.completion} %</div>
           <div>{item.weight} %</div>
         </Item>
         <Button onClick={handleDelete}>

@@ -12,13 +12,18 @@ const Form = ({ itemId, hideForm }) => {
   const [objectiveErrors, setObjectiveErrors] = useState([])
   const [value, setValue] = useState({
     weight: '',
-    title: ''
+    title: '',
+    completion: ''
   })
 
   useEffect(() => {
     const selectedItem = objectives.find(item => item.id == itemId)
     if (selectedItem) {
-      setValue({ weight: selectedItem.weight, title: selectedItem.title })
+      setValue({
+        weight: selectedItem.weight,
+        title: selectedItem.title,
+        completion: selectedItem.completion || ''
+      })
     }
   }, [itemId])
 
@@ -61,8 +66,8 @@ const Form = ({ itemId, hideForm }) => {
       } else {
         const response = await request('/objectives', value, 'POST')
         handleDataReceived(response, createObjective)
+        setValue({ weight: '', title: '', completion: '' })
       }
-      setValue({ weight: '', title: ''})
     } catch(error) {
       setState({...state, error })
     }
@@ -81,6 +86,14 @@ const Form = ({ itemId, hideForm }) => {
             type="text"
             onChange={(e) => handleChange(e.target.value, 'title')}
             value={value.title}
+          />
+        </Label>
+        <Label>
+          Completion
+          <Input
+            type="number"
+            onChange={(e) => handleChange(e.target.value, 'completion')}
+            value={value.completion}
           />
         </Label>
         <Label>

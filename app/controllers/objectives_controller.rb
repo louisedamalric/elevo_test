@@ -43,7 +43,7 @@ class ObjectivesController < ApplicationController
   private
 
   def objective_params
-    params.require(:objective).permit(:title, :weight)
+    params.require(:objective).permit(:title, :weight, :completion)
   end
 
   def set_objective
